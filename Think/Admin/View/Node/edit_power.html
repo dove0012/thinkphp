@@ -1,0 +1,48 @@
+<style>
+    #<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form .easyui_Controllers{
+        margin-left:40px;
+    }
+    #<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form .easyui_sort{
+        width:30px;
+    }
+</style>
+<form id="<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form" method="POST">
+    <div style="margin:0 auto;width:80%;" class="easyui_form">
+        <div>
+            <foreach name="node" item="m">
+                <div>
+                    <input class="easyui_node" tip="<{$m['checked']}>" type="checkbox" <if condition="$m['checked']">checked="checked"</if> /> 
+                    <input type="hidden" name="module[<{$m.moduleName}>]" value="<if condition="$m['checked']">1<else />0</if>" />
+                    <font><{$m.moduleName}></font> 
+                    <input type="text" name="module_title[<{$m.moduleName}>]" value="<{$m.title}>" />
+                    排序: <input class="easyui_sort" type="text" name="module_sort[<{$m.moduleName}>]" value="<{$m.sort}>" />
+                    <input type="hidden" name="module_id[<{$m.moduleName}>]" value="<{$m.id}>" />
+                </div>
+                <div class="easyui_Controllers">
+                    <foreach name="m.ControllerName" item="a">
+                        <div>
+                            <input class="easyui_node" type="checkbox" <if condition="$a['checked']">checked="checked"</if> /> 
+                            <input type="hidden" name="<{$m.moduleName}>_Controller[<{$a.name}>]" value="<if condition="$a['checked']">1<else />0</if>" />
+                            <font><{$a.name}></font> 
+                            <input type="text" name="Controller_title[<{$m.moduleName}>_<{$a.name}>]" value="<{$a.title}>" />
+                            排序: <input class="easyui_sort" type="text" name="Controller_sort[<{$m.moduleName}>_<{$a.name}>]" value="<{$a.sort}>" />
+                            <input type="hidden" name="Controller_id[<{$m.moduleName}>_<{$a.name}>]" value="<{$a.id}>" />
+                        </div>
+                    </foreach>
+                </div>
+            </foreach>
+        </div>
+        <div class="button"><input type="button" class="easyui_form_submit" value="确定更新" /></div>
+    </div>
+</form>
+<script>
+$(function(){
+    $("#<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form").postForm({
+        url : "<{:U('__ACTION__')}>",
+    });
+    $("#<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form .easyui_node").click(function(){
+		var hander = $(this).next();
+        hander.val() == "0" ? hander.val("1") : hander.val("0");
+    });
+});
+</script>

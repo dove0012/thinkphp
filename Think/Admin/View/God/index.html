@@ -1,0 +1,73 @@
+<div id="<{$Think.CONTROLLER_NAME}>_dg"></div>
+<style>
+.datagrid-cell a img{
+    max-width:20px;max-height:20px;vertical-align:middle;
+}
+</style>
+<script>
+    var width = 400;
+    var height = 260;
+    $("#<{$Think.CONTROLLER_NAME}>_dg").datagrid({
+        title:'游神申请管理',
+        nowrap: false,
+        striped: true,
+        url:"<{:U('__URL__/take/',array('type'=>$type))}>",
+        remoteSort: false,
+        idField:'id',
+        pagination:true,
+        rownumbers:true,
+        singleSelect:true,
+        fitColumns:true,
+        toolbar:[
+            {
+                text:'审核申请',
+                iconCls:'icon-god',
+                handler:function(){
+                    var selected=$("#<{$Think.CONTROLLER_NAME}>_dg").datagrid("getSelected");
+                    if(selected){
+                        $("#easyui_window").mWindow({
+                            title:"审核申请",
+                            href:"<{:U('__URL__/checkApply/id/"+selected.id+"/member_id/"+selected.member_id+"')}>",
+                            height:height,
+                            width:width
+                        })
+                    }else{
+                        $.messager.alert('信息提示','请选择申请','error');
+                    }
+                }
+            }
+        ],
+        columns:[[
+		        {field:'id',title:'编号',width:20,align:'center'},
+                {field:'name',title:'姓名',width:80,align:'center'},
+                {field:'age',title:'年龄',width:20,align:'center'},
+                {field:'sex',title:'性别',width:20,align:'center'},
+                {field:'city',title:'所在城市',width:80,align:'center'},
+                {field:'picture',title:'头像',width:30,align:'center',formatter:function(value, row, index) {
+                    var str = value ? '<a href="'+value+'" target="_blank"><img src="'+value+'" /></a>' : "";
+                    return str;
+                }},
+                {field:'create_time',title:'创建时间',width:80,align:'center',formatter:function(value, row, index){
+                    return '<font title="'+$.mTime.UnixToDate(value,true)+'">'+$.mTime.UnixToDate(value)+'</font>';
+                }},
+                {field:'update_time',title:'更新时间',width:80,align:'center',formatter:function(value, row, index){
+                    return '<font title="'+$.mTime.UnixToDate(value,true)+'">'+$.mTime.UnixToDate(value)+'</font>';
+                }},
+                {field:'status',title:'状态',width:20,align:'center',formatter:function(value, row, index) {
+                    var str = "";
+                    switch (value) {
+                        case "0" :
+                            str = "审核中";
+                            break;
+                        case "1" :
+                            str = "通过";
+                            break;
+                        case "2" :
+                            str = "否决";
+                            break;
+                    }
+                    return str;
+                }}
+            ]]
+    });
+</script>

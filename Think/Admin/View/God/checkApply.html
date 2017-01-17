@@ -1,0 +1,23 @@
+<form id="<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form" method="POST" enctype="multipart/form-data">
+    <div class="easyui_form">
+        <div>
+		    <span>审核状态:</span>
+			<input <if condition="$data.status eq 1">checked="checked"</if> type="radio" name="status" value="1" /> 通过
+			<input <if condition="$data.status eq 2">checked="checked"</if> type="radio" name="status" value="2" /> 否决
+		</div>
+        <div>
+		    <span>审核意见:</span>
+			<textarea name="remark" style="height:100px;"><{$data.remark}></textarea >
+		</div>
+        <div class="button">
+		    <input type="button" class="easyui_form_submit" value="确定" />
+		</div>
+    </div>
+</form>
+<script>
+$(function(){
+    $("#<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form").postForm({
+        url : "<{:U('__ACTION__')}>",
+    });
+});
+</script>

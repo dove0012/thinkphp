@@ -1,0 +1,29 @@
+<form id="<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form" method="POST">
+    <div style="margin:20px auto 0px;width:360px;" class="easyui_form">
+        <div>
+		    <span>角色名:</span>
+			<input type="text" name="name" value="<{$res.name}>" />
+		</div>
+        <div>
+		    <span>状态:</span>
+			<select name="status">
+			    <option value="0">禁用</option>
+				<option value="1" <if condition="$res.status eq 1">selected="selected"</if>>启用</option>
+			</select>
+		</div>
+        <div>
+		    <span>备注:</span>
+			<textarea name="remark" style="width:208px;"><{$res.remark}></textarea>
+		</div>
+        <div class="button">
+		    <input type="button" class="easyui_form_submit" value="确定" />
+		</div>
+    </div>
+</form>
+<script>
+$(function(){
+    $("#<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form").postForm({
+        url : "<{:U('__ACTION__')}>",
+    });
+});
+</script>

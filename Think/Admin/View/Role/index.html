@@ -1,0 +1,94 @@
+<div id="<{$Think.CONTROLLER_NAME}>_dg"></div>
+<script>
+    var width = 400;
+	var height = 260;
+    $("#<{$Think.CONTROLLER_NAME}>_dg").datagrid({
+        title:'管理员管理',
+        nowrap: false,
+        striped: true,
+        url:"<{:U('__URL__/take')}>",
+        remoteSort: false,
+        idField:'id',
+        pagination:true,
+        rownumbers:true,
+        singleSelect:true,
+        fitColumns:true,
+        toolbar:[
+            {
+                text:'增加',
+                iconCls:'icon-add',
+                handler:function(){
+                    $("#easyui_window").mWindow({
+                        title:"增加角色",
+                        href:"<{:U('__URL__/add_role')}>",
+                        height:height,
+                        width:width
+                    });
+                }
+            },'-',{
+                text:'删除',
+                iconCls:'icon-remove',
+                handler:function(){
+                    var selected=$("#<{$Think.CONTROLLER_NAME}>_dg").datagrid("getSelected");
+                    if(selected){
+                        $.messager.confirm('系统提示', '你确定要删除['+selected.name+']此角色'+'?', function(r){
+                            if(r){
+                                $.get("<{:U('__URL__/del_role/id/"+selected.id+"')}>",function(result){
+                                    $.messager.alert('信息提示',result.info);
+                                    if(result.status == 1) $("#<{$Think.CONTROLLER_NAME}>_dg").datagrid("load");
+                                });
+                            }
+                        });
+                    }else{
+                        $.messager.alert('信息提示','请选择角色','error');
+                    }
+                }
+            },'-',{
+                text:'编辑',
+                iconCls:'icon-edit',
+                handler:function(){
+                    var selected=$("#<{$Think.CONTROLLER_NAME}>_dg").datagrid("getSelected");
+                    if(selected){
+                        $("#easyui_window").mWindow({
+                            title:"编辑角色",
+                            href:"<{:U('__URL__/edit_role/id/"+selected.id+"')}>",
+                            height:height,
+                            width:width
+                        });
+                    }else{
+                        $.messager.alert('信息提示','请选择用户','error');
+                    }
+                }
+            },'-',{
+                text:'权限管理',
+                iconCls:'icon-power',
+                handler:function(){
+                    var selected=$("#<{$Think.CONTROLLER_NAME}>_dg").datagrid("getSelected");
+                    if(selected){
+                        $("#easyui_window").mWindow({
+                            title:"权限管理",
+                            href:"<{:U('__URL__/edit_power/id/"+selected.id+"')}>",
+                            height:600,
+                            width:800
+                        });
+                    }else{
+                        $.messager.alert('信息提示','请选择用户','error');
+                    }
+                }
+            }
+        ],
+        columns:[[
+                {field:'id',title:'编号',width:20},  
+                {field:'name',title:'角色名',width:200},
+                {field:'create_time',title:'创建时间',width:200,align:'center',formatter:function(value, row, index){
+                    return '<font title="'+$.mTime.UnixToDate(value,true)+'">'+$.mTime.UnixToDate(value)+'</font>';
+                }},
+                {field:'update_time',title:'更新时间',width:200,align:'center',formatter:function(value, row, index){
+                    return '<font title="'+$.mTime.UnixToDate(value,true)+'">'+$.mTime.UnixToDate(value)+'</font>';
+                }},
+                {field:'status',title:'状态',width:100, align: 'center',formatter:function(value, row, index) {
+                        return makeDgCheckBox({url:'<{:U("__URL__/edit_value")}>',value:value});
+                    }}
+            ]]
+    });
+</script>

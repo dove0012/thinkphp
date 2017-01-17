@@ -1,0 +1,97 @@
+<style type="text/css">
+#<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_games,#<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_often_go{
+	margin:10px 20px;
+}
+.games,.often_go,.area{
+	display:inline-block;margin-left:30px;
+}
+.games{
+	width:100px;
+}
+.often_go{
+	width:250px;
+}
+</style>
+<form id="<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form" method="POST" enctype="multipart/form-data">
+    <div class="easyui_form">
+        <div>
+            <span>下单者编号:</span>
+            <input type="text" name="member_id" value="<{$data.member_id}>" />
+        </div>
+        <div>
+		    <span>下单者名称:</span>
+			<input type="text" name="member_name" value="<{$data.member_name}>" />
+		</div>
+        <div>
+		    <span>下单者所在城市:</span>
+			<div class="area" id="member_city"></div>
+		</div>
+        <div>
+		    <span>约单单价:</span>
+			<input type="text" name="price" value="<{$data.price}>" />
+		</div>
+        <div>
+		    <span>约单时长:</span>
+			<input type="text" name="hour" value="<{$data.hour}>" />
+		</div>
+        <div>
+		    <span>约单者编号:</span>
+			<input type="text" name="to_member_id" value="<{$data.to_member_id}>" />
+		</div>
+        <div>
+		    <span>约单者名称:</span>
+			<input type="text" name="to_member_name" value="<{$data.to_member_name}>" />
+		</div>
+        <div>
+		    <span>约单者所在城市:</span>
+			<div class="area" id="to_member_city"></div>
+		</div>
+        <div>
+		    <span>约单所在城市:</span>
+			<div class="area" id="order_city"></div>
+		</div>
+        <div>
+		    <span>约单游戏:</span>
+			<div id="<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_games">
+				<foreach name="games" item="v">
+					<font class="games"><{$v.name}></font>
+					<input class="radioBtn" type="radio" <if condition="$v['id'] eq $data['game_id']">checked="checked"</if> name="game_id" value="<{$v.id}>" />
+				</foreach>
+				<input type="hidden" name="game_name" value="<{$data.game_name}>" />
+			</div>
+		</div>
+        <div>
+		    <span>约单门店:</span>
+			<div id="<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_often_go">
+				<foreach name="often_go" item="v">
+					<if condition="$v.level eq 3">
+						<font class="often_go"><{$v.name}></font>
+						<input class="radioBtn" type="radio" <if condition="$v['id'] eq $data['shop_id']">checked="checked"</if> name="shop_id" value="<{$v.id}>" />
+					</if>
+				</foreach>
+				<input type="hidden" name="shop_name" value="<{$data.shop_name}>" />
+			</div>
+		</div>
+        <div>
+		    <span>订单备注:</span>
+			<input type="text" name="remark" value="<{$data.remark}>" />
+		</div>
+        <div class="button">
+		    <input type="button" class="easyui_form_submit" value="确定" />
+		</div>
+    </div>
+</form>
+<script>
+$(function(){
+	$(".radioBtn").click(function(){
+		var name = $(this).prev().html();
+		$(this).parent().find('input[type="hidden"]').val(name);
+	});
+    $("#<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form").postForm({
+        url : "<{:U('__ACTION__')}>",
+    });
+    $("#member_city").getArea({"area_id":0,"area_name":"<{$data.member_city}>"});
+    $("#to_member_city").getArea({"area_id":0,"area_name":"<{$data.to_member_city}>"});
+    $("#order_city").getArea({"area_id":0,"area_name":"<{$data.order_city}>"});
+});
+</script>

@@ -1,0 +1,90 @@
+<div id="<{$Think.CONTROLLER_NAME}>_dg"></div>
+<script>
+    var width = 400;
+    var height = 280;
+    $("#<{$Think.CONTROLLER_NAME}>_dg").datagrid({
+        title: '项目权限管理',
+        nowrap: false,
+        striped: true,
+        url:"<{:U('__URL__/take')}>",
+        remoteSort: false,
+        pagination: true,
+        fitColumns: true,
+        rownumbers: true,
+        fitColumns:true,
+        singleSelect:true,
+        toolbar: [
+            {
+                text: '增加',
+                iconCls: 'icon-add',
+                handler: function() {
+                    $("#easyui_window").mWindow({
+                        title: "增加项目权限",
+                        href: "<{:U('__URL__/add_app')}>",
+                        height: height,
+                        width: width,
+                    });
+                }
+            },'-',{
+                text: '删除',
+                iconCls: 'icon-remove',
+                handler: function() {
+                    var row = $("#<{$Think.CONTROLLER_NAME}>_dg").datagrid("getSelected");
+                    if (row) {
+                        $.messager.confirm('系统提示', '你确定要删除[' + row.title + ']项目' + '?', function(r) {
+                            if (r) {
+                                $.getJSON("<{:U('__URL__/del_app/id/"+row.id+"')}>", function(result) {
+                                    $.messager.alert('信息提示', result.info);
+                                    if(result.status == 1) $("#<{$Think.CONTROLLER_NAME}>_dg").datagrid("reload");
+                                });
+                            }
+                        });
+                    } else {
+                        $.messager.alert('信息提示', '请选择项目', 'error');
+                    }
+                }
+            },'-',{
+                text: '编辑',
+                iconCls: 'icon-edit',
+                handler: function() {
+                    var selected = $("#<{$Think.CONTROLLER_NAME}>_dg").datagrid("getSelected");
+                    if (selected) {
+                        $("#easyui_window").mWindow({
+                            title: "编辑项目权限",
+                            href: "<{:U('__URL__/edit_app/id/"+selected.id+"')}>",
+                            height: height,
+                            width: width,
+                        })
+                    } else {
+                        $.messager.alert('信息提示', '请选择项目', 'error');
+                    }
+                }
+            },'-',{
+                text:'权限节点管理',
+                iconCls:'icon-power',
+                handler:function(){
+                    var selected=$("#<{$Think.CONTROLLER_NAME}>_dg").datagrid("getSelected");
+                    if(selected){
+                        $("#easyui_window").mWindow({
+                            title:"权限节点管理",
+                            href:"<{:U('__URL__/edit_power/id/"+selected.id+"')}>",
+                            height:600,
+                            width:600,
+                        });
+                    }else{
+                        $.messager.alert('信息提示','请选择项目','error');
+                    }
+                }
+            }
+        ],
+        columns: [[
+                {field: 'id', title: '编号', width: 30},
+                {field: 'name', title: '项目名', width: 30},
+                {field: 'title', title: '项目标题', width: 100},
+                {field: 'remark', title: '备注', width: 200},
+                {field: 'status', title: '状态', width: 50, align: 'center',formatter:function(value, row, index) {
+                        return makeDgCheckBox({url:'<{:U("__URL__/edit_value")}>',value:value});
+                    }}
+            ]]
+    });
+</script>

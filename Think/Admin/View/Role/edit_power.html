@@ -1,0 +1,74 @@
+<style>
+    #<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form .action{
+        margin-left:30px;
+    }
+    #<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form .easyui_checkedAll{
+        margin-left:60px;
+    }
+    #<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form .easyui_app{
+        width:200px;
+        margin-left:20px;
+    }
+</style>
+<form id="<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form" method="POST">
+    <div style="margin:20px auto;width:96%" class="easyui_form">
+        <div>
+            请先选择项目
+            <input type="button" value="全选" class="easyui_checkedAll" />
+            <input type="button" value="反选" class="easyui_checkedInverse" />
+        </div>
+        <foreach name="apps" item="v">
+            <div>
+			    <input type="button" appid="<{$v.id}>" class="easyui_app" value="<{$v.title}>" />
+			</div>
+        </foreach>
+        <div class="easyui_box"></div>
+        <div class="button">
+		    <input type="button" class="easyui_form_submit" value="<if condition="ACTION_NAME eq 'add_role'">确定增加<else />确定更新</if>" />
+		</div>
+    </div>
+</form>
+<script>
+    function toCheckBox(handle){
+        $(handle).prop("checked") ? $(handle).next().val("1") : $(handle).next().val("0");
+    }
+    $(function(){
+	    $("#<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form").postForm({
+            url : "<{:U('__ACTION__')}>",
+        });
+		
+        $("#<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form .easyui_app").click(function(){
+            var appid = $(this).attr("appid");
+			var easyuiBox = $("#<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form .easyui_box");
+			easyuiBox.html("")
+            $.getJSON("__URL__/get_node/id/"+appid+"/roleId/<{$roleId}>", function(result){
+                var i, checked, str = '<input type="hidden" name="appid" value="'+appid+'"';
+                for(i in result){
+                    checked = result[i].module.checked ? 'checked="checked"' : '';
+                    str += '<div><input type="checkbox" '+checked+' onclick="toCheckBox(this);" />';
+                    str += '<input type="hidden" value="'+result[i].module.checked+'" name="module['+result[i].module.name+']" />';
+                    str += '<input type="hidden" value="'+result[i].module.id+'" name="module_id['+result[i].module.name+']" />';
+                    str += result[i].module.title+'</div>';
+                    str += '<div class="action">';
+                    for(j in result[i].action){
+                        checked = result[i].action[j].checked ? 'checked="checked"' : '';
+                        str += '<input type="checkbox" '+checked+' onclick="toCheckBox(this);" />';
+                        str += '<input type="hidden" value="'+result[i].action[j].checked+'" name="'+result[i].module.name+'_action['+result[i].action[j].name+']" />';
+                        str += '<input type="hidden" value="'+result[i].action[j].id+'" name="action_id['+result[i].module.name+'_'+result[i].action[j].name+']" />';
+                        str += result[i].action[j].title;
+                    }
+                    str += '</div>';
+                }
+                easyuiBox.html(str);
+            });
+        });
+        $("#<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form .easyui_checkedAll").click(function(){
+            $("#<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form .easyui_box").find("input[type=checkbox]").prop("checked","true").next().val("1");
+        });
+        $("#<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form .easyui_checkedInverse").click(function(){
+            $("#<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form .easyui_box").find("input[type=checkbox]").each(function(){
+                $(this).prop("checked") ? $(this).prop("checked",false).next().val("0") : $(this).prop("checked",true).next().val("1")
+            });
+        });
+    });
+</script>

@@ -1,0 +1,57 @@
+<form id="<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form" method="POST">
+    <div class="easyui_form">
+        <div>
+		    <span>用户名:</span>
+			<input type="text" name="account" value="<{$res.account}>" />
+		</div>
+        <div>
+		    <span>昵称:</span>
+			<input type="text" name="nickname" value="<{$res.nickname}>" />
+		</div>
+        <div>
+			<span><if condition="ACTION_NAME eq 'edit_admin'">密码<else />原密码</if>:</span>
+			<input type="password" name="password" />
+		</div>
+        <div>
+			<span><if condition="ACTION_NAME eq 'edit_admin'">确认密码<else />新密码</if>:</span>
+			<input type="password" name="repassword" />
+		</div>
+		<if condition="ACTION_NAME eq 'edit_admin'">
+            <div>
+                <span>用户角色:</span>
+                <span style="width:200px;vertical-align:middle;">
+                    <foreach name="role" item="v">
+                        <div style="text-align:left;">
+                            <input type="checkbox" value="<{$v.id}>" name="role_id[]" <if condition="$v['checked']">checked="checked"</if> /><{$v.name}>
+                        </div>
+                    </foreach>
+                </span>
+            </div>
+		</if>
+        <div>
+		    <span>邮箱地址:</span>
+			<input type="text" name="email" value="<{$res.email}>" />
+		</div>
+        <div>
+		    <span>备注:</span>
+			<textarea name="remark" style="width:208px;"><{$res.remark}></textarea>
+		</div>
+        <div>
+		    <span>状态:</span>
+			<select name="status">
+			    <option value="0">禁用</option>
+				<option value="1" <if condition="$res.status eq 1">selected="selected"</if>>启用</option>
+			</select>
+		</div>
+        <div class="button">
+		    <input type="button" class="easyui_form_submit" value="确定" />
+		</div>
+    </div>
+</form>
+<script>
+$(function(){
+    $("#<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form").postForm({
+        url : "<{:U('__ACTION__')}>",
+    });
+});
+</script>

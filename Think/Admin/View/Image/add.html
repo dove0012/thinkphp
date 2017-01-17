@@ -1,0 +1,34 @@
+<form id="<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form" method="POST" enctype="multipart/form-data">
+    <div class="easyui_form">
+        <div>
+		    <span>图片:</span>
+			<input type="file" name="image" />
+		</div>
+        <if condition="$data.path">
+        <div style="text-align:center;"><img style="max-width:100px;max-height:100px" src="<{$data.path}>" /></div>
+        </if>
+        <div class="button">
+		    <input type="button" class="easyui_form_submit" value="确定" />
+		</div>
+    </div>
+</form>
+<script>
+$(function(){
+	var hander = $("#<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form");
+	hander.find(".easyui_form_submit").click(function(){
+		hander.ajaxSubmit({
+			url: "<{:U('__ACTION__')}>",
+			type: "POST",
+			dataType: "json",
+			success: function(result){
+				$.messager.alert('信息提示', result.info);
+				//成功则关闭窗口 否则刷新窗口
+				if(result.status == 1){
+					$("#image_window").window("close");
+					$("#<{$Think.CONTROLLER_NAME}>_dg").datagrid("load");
+				}
+			}
+		});
+	});
+});
+</script>

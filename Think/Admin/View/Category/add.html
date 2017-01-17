@@ -1,0 +1,28 @@
+<form id="<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form" method="POST">
+    <div class="easyui_form" style="margin:20px auto 0px;">
+        <div><span>上级分类:</span>
+            <select name="pid">
+                <option value="0">顶级分类</option>
+                <{$cat_list}>
+            </select>
+        </div>
+        <div>
+		    <span>类别名:</span>
+			<input type="text" name="name" value="<{$res.name}>" /> <font color="red">*</font>
+		</div>
+        <div>
+		    <span>排序:</span>
+			<input type="text" name="sort" value="<{$res.sort}>" />
+	    </div>
+        <div style="width:181px;margin:10px auto 0px;cursor:pointer;">
+		    <input type="button" class="easyui_form_submit" value="确定" />
+		</div>
+    </div>
+</form>
+<script>
+$(function(){
+    $("#<{$Think.CONTROLLER_NAME}>_<{$Think.ACTION_NAME}>_form").postForm({
+        url : "<{:U('__ACTION__')}>",
+    });
+});
+</script>

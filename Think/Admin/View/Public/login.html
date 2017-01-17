@@ -1,0 +1,57 @@
+<include file="Public/header" />
+<style>
+  body{
+    background:#B7E8BD;
+  }
+  img{
+    border:none;
+  }
+  #login{
+    width:360px;margin:200px auto;
+  }
+  #form div{
+    border-bottom:1pt solid gray;height:36px;line-height:36px;
+  }
+  #form div span{
+    width:80px;display:inline-block;text-align:right;font-weight:600;
+  }
+  .bgline{
+    background:url('__PUBLIC__/images/bgline.gif') repeat-x;
+    border-bottom:1pt solid gray;height:5px;line-height:5px;overflow:hidden;
+  }
+</style>
+<body onload="$('input[name=account]').focus();">
+  <form method='POST' name="login" id="LoginForm" ACTION="<{:U('Admin/Public/checkLogin')}>">
+    <div id="login">
+      <div class="bgline"></div>
+      <div style="border:1px solid silver;border-bottom:1px solid silver;vertical-align:top;padding:3px;text-align:center;font-weight:600;line-height:26px;background:#cdd;">
+        <img src="/Public/images/preview_f2.png" border="0" align="absmiddle">后台管理系统
+	  </div>
+      <div class="bgline"></div>
+      <div id="form" style="border:1px solid silver;">
+        <div><span>帐 号：</span><input type="text" name="account" /></div>
+        <div><span>密 码：</span><input type="password" name="password" /></div>
+        <div><span>验证码：</span><input type="text" name="verify" class="verify" /> <img title="点击刷新" src="<{:U('verify')}>" onclick="this.src='<{:U('verify')}>?'+Math.random();" style="vertical-align:middle;" /></div>
+        <div style="text-align:center;"><input style="width:100px;margin-top:6px;font-weight:600;font-size:16px;" type="submit" value="登 录" /></div>
+      </div>
+      <div class="bgline"></div>
+    </div>
+  </form>
+<include file="Public/footer" />
+<script>
+  $(document).ready(function(){
+    $('#LoginForm').submit(function(){
+      var status = true;
+      $(this).find("input").each(function(){
+        if($(this).val() == ""){
+          var value = $.trim($(this).prev().html());
+          value = value.substr(0,(value.length - 1));
+          alert(value + " 不能为空!");
+          status = false;
+          return status;
+        }
+      });
+      return status;
+    });
+  });
+</script>

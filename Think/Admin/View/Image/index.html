@@ -1,0 +1,93 @@
+<div id="<{$Think.CONTROLLER_NAME}>_dg"></div>
+<div style="position:absolute;z-index:9999;top:0;left:0;"><img id="<{$Think.CONTROLLER_NAME}>_imageBox" src="" /></div>
+<div id="image_window"></div>
+<script>
+$(function(){
+    var width = 400;
+    var height = 240;
+    $("#<{$Think.CONTROLLER_NAME}>_dg").datagrid({
+        nowrap: false,
+        striped: true,
+        url:"<{:U('__URL__/take')}>",
+        remoteSort: false,
+        idField:'id',
+        pagination:true,
+        rownumbers:true,
+        singleSelect:true,
+        fitColumns:true,
+        toolbar:[
+            {
+                text:'增加',
+                iconCls:'icon-add',
+                handler:function(){
+                    $("#image_window").mWindow({
+                        title:"增加图片",
+                        href:"<{:U('__URL__/add')}>",
+                        height:height,
+                        width:width
+                    });
+                }
+            },
+            {
+                text:'删除',
+                iconCls:'icon-remove',
+                handler:function(){
+                    var selected=$("#<{$Think.CONTROLLER_NAME}>_dg").datagrid("getSelected");
+                    if(selected){
+                        $.messager.confirm('系统提示', '你确定要删除此图片'+'?', function(r){
+                            if(r){
+                                $.get("<{:U('__URL__/del/id/"+selected.id+"')}>",function(result){
+                                    $.messager.alert('信息提示',result.info);
+                                    if(result.status == 1) $("#<{$Think.CONTROLLER_NAME}>_dg").datagrid("load");
+                                });
+                            }
+                        });
+                    }else{
+                        $.messager.alert('信息提示','请选择图片','error');
+                    }
+                }
+            },
+            {
+                text:'编辑',
+                iconCls:'icon-edit',
+                handler:function(){
+                    var selected=$("#<{$Think.CONTROLLER_NAME}>_dg").datagrid("getSelected");
+                    if(selected){
+                        $("#image_window").mWindow({
+                            title:"编辑图片",
+                            href:"<{:U('__URL__/edit/id/"+selected.id+"')}>",
+                            height:height,
+                            width:width
+                        })
+                    }else{
+                        $.messager.alert('信息提示','请选择图片','error');
+                    }
+                }
+            }
+        ],
+        columns:[[
+		        {field:'id',title:'编号',width:10,align:'center'},
+                {field:'path',title:'图片',width:300,align:'center',formatter:function(value, row, index) {
+                    var str = value ? '<a href="'+value+'" target="_blank"><img class="mImage" src="'+value+'" /></a>' : "";
+                    return str;
+                }},
+                {field:'create_time',title:'创建时间',width:80,align:'center',formatter:function(value, row, index){
+                    return '<font title="'+$.mTime.UnixToDate(value,true)+'">'+$.mTime.UnixToDate(value)+'</font>';
+                }},
+                {field:'update_time',title:'更新时间',width:80,align:'center',formatter:function(value, row, index){
+                    return '<font title="'+$.mTime.UnixToDate(value,true)+'">'+$.mTime.UnixToDate(value)+'</font>';
+                }}
+            ]],
+        onLoadSuccess: function(){   
+            //加载完数据为图片绑定hover事件
+            $(".mImage").hover(function(event){console.log(event);
+                $("#<{$Think.CONTROLLER_NAME}>_imageBox").parent().css({top:event.clientY,left:event.clientX+20});
+                $("#<{$Think.CONTROLLER_NAME}>_imageBox").attr("src", $(this).attr("src")).show();
+            }, function(){
+                $("#<{$Think.CONTROLLER_NAME}>_imageBox").attr("src", "").hide();
+            });
+        }
+    });
+    
+});
+</script>

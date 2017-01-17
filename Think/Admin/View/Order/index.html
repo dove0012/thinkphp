@@ -1,0 +1,109 @@
+<div id="<{$Think.CONTROLLER_NAME}>_dg"></div>
+<style>
+.datagrid-cell a img{
+    max-width:20px;max-height:20px;vertical-align:middle;
+}
+</style>
+<script>
+    var width = 700;
+    var height = 660;
+    $("#<{$Think.CONTROLLER_NAME}>_dg").datagrid({
+        title:'会员订单管理',
+        nowrap: false,
+        striped: true,
+        url:"<{:U('__URL__/take')}>",
+        remoteSort: false,
+        idField:'id',
+        pagination:true,
+        rownumbers:true,
+        singleSelect:true,
+        fitColumns:true,
+        toolbar:[
+            {
+                text:'增加',
+                iconCls:'icon-add',
+                handler:function(){
+                    $("#easyui_window").mWindow({
+                        title:"增加订单",
+                        href:"<{:U('__URL__/add')}>",
+                        height:height,
+                        width:width
+                    });
+                }
+            }/*,
+            {
+                text:'删除',
+                iconCls:'icon-remove',
+                handler:function(){
+                    var selected=$("#<{$Think.CONTROLLER_NAME}>_dg").datagrid("getSelected");
+                    if(selected){
+                        $.messager.confirm('系统提示', '你确定要删除['+selected.name+']此订单'+'?', function(r){
+                            if(r){
+                                $.get("<{:U('__URL__/del/id/"+selected.id+"')}>",function(result){
+                                    $.messager.alert('信息提示',result.info);
+                                    if(result.status == 1) $("#<{$Think.CONTROLLER_NAME}>_dg").datagrid("load");
+                                });
+                            }
+                        });
+                    }else{
+                        $.messager.alert('信息提示','请选择订单','error');
+                    }
+                }
+            }*/,
+            {
+                text:'编辑',
+                iconCls:'icon-edit',
+                handler:function(){
+                    var selected=$("#<{$Think.CONTROLLER_NAME}>_dg").datagrid("getSelected");
+                    if(selected){
+                        $("#easyui_window").mWindow({
+                            title:"编辑订单",
+                            href:"<{:U('__URL__/edit/id/"+selected.id+"')}>",
+                            height:height,
+                            width:width
+                        });
+                    }else{
+                        $.messager.alert('信息提示','请选择订单','error');
+                    }
+                }
+            }
+        ],
+        columns:[[
+		        {field:'id',title:'编号',width:20,align:'center'},
+                {field:'member_name',title:'下单会员',width:80,align:'center'},
+                {field:'member_city',title:'所在城市',width:120,align:'center'},
+                {field:'price',title:'单价',width:20,align:'center'},
+                {field:'hour',title:'时长',width:100,align:'center'},
+                {field:'total_price',title:'总额',width:100,align:'center'},
+                {field:'order_city',title:'约玩城市',width:100,align:'center'},
+                {field:'to_member_name',title:'被约会员',width:100,align:'center'},
+                {field:'to_member_city',title:'所在城市',width:100,align:'center'},
+                {field:'game_name',title:'约玩游戏',width:100,align:'center'},
+                {field:'shop_name',title:'约玩门店',width:100,align:'center'},
+                {field:'create_time',title:'创建时间',width:80,align:'center',formatter:function(value, row, index){
+                    return '<font title="'+$.mTime.UnixToDate(value,true)+'">'+$.mTime.UnixToDate(value)+'</font>';
+                }},
+                {field:'update_time',title:'更新时间',width:80,align:'center',formatter:function(value, row, index){
+                    return '<font title="'+$.mTime.UnixToDate(value,true)+'">'+$.mTime.UnixToDate(value)+'</font>';
+                }},
+                {field:'status',title:'状态',width:50,align:'center',formatter:function(value, row, index) {
+                        var str = "";
+                        switch (value) {
+                            case "0" :
+                                str = "准备";
+                                break;
+                            case "1" :
+                                str = "接收";
+                                break;
+                            case "2" :
+                                str = "取消";
+                                break;
+                            case "3" :
+                                str = "完成";
+                                break;
+                        }
+                        return str;
+                    }}
+            ]]
+    });
+</script>

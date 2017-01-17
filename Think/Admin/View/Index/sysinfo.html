@@ -1,0 +1,77 @@
+<style>
+.list-div table{
+	width:100%;
+}
+.list-div{
+	width:100%;
+	height:100%;
+}
+.list-div th{
+	padding:10px;
+	background:#BBDDE5 url("__PUBLIC__/Images/th_bg.gif") repeat-x;
+}
+.list-div td{
+	padding:10px;
+}
+</style>
+<div class="list-div">
+<table cellspacing='1' cellpadding='1'>
+  <tr>
+    <th colspan="4">系 统 信 息</th>
+  </tr>
+  <tr>
+    <td width="20%">服务器操作系统:</td>
+    <td width="30%"><{$sys_info.os}> (<{$sys_info.ip}>)</td>
+    <td width="20%">Web 服务器:</td>
+    <td width="30%"><{$sys_info.web_server}></td>
+  </tr>
+  <tr>
+    <td>PHP 版本:</td>
+    <td><{$sys_info.php_ver}></td>
+    <td>MySQL 版本:</td>
+    <td><{$sys_info.mysql_ver}></td>
+  </tr>
+  <tr>
+    <td>安全模式:</td>
+    <td><{$sys_info.safe_mode}></td>
+    <td>安全模式GID:</td>
+    <td><{$sys_info.safe_mode_gid}></td>
+  </tr>
+  <tr>
+    <td>Socket 支持:</td>
+    <td><{$sys_info.socket}></td>
+    <td>时区设置:</td>
+    <td><{$sys_info.timezone}></td>
+  </tr>
+  <tr>
+    <td>GD 版本:</td>
+    <td title="<{$sys_info.gdTitle}>"><{$sys_info.gd}></td>
+    <td>Zlib 支持:</td>
+    <td><{$sys_info.zlib}></td>
+  </tr>
+  <tr>
+    <td>文件上传的最大大小:</td>
+    <td><{$sys_info.max_filesize}></td>
+    <td>编码:</td>
+    <td><{$sys_info.charset}></td>
+  </tr>
+  <tr>
+    <td>SESSION缓存时间:</td>
+    <td><{$sys_info.session_cache_expire}>分钟</td>
+    <td>最大使用内存:</td>
+    <td><{$sys_info.memory_limit}></td>
+  </tr>
+  <tr>
+    <td>PHP运行方式:</td>
+    <td><{$sys_info.php_sapi_name}></td>
+    <td>服务器时间:</td>
+    <td><{$sys_info.date}></td>
+  </tr>
+  <tr>
+    <td>剩余空间:</td>
+    <td><{$sys_info.disk_free_space}></td>
+    <td>ThinkPHP版本:</td>
+    <td><{$sys_info.think_version}> [ <a href="http://thinkphp.cn" target="_blank">查看最新版本</a> ]</td>
+  </tr>
+</table>
+</div>

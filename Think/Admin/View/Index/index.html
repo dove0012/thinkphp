@@ -1,0 +1,306 @@
+<include file="Public:header" />
+
+<style>
+#header{
+	height:93px;
+}
+#mymenu{
+	width:180px;padding:6px 0 0 6px;
+}
+#navTree,#navTree li{
+	margin:2px 0;
+}
+
+/*表单样式*/
+.easyui_form div{
+    margin-top:10px;
+}
+.easyui_form span{
+    width:100px;
+	text-align:right;
+	display:inline-block;
+	margin-right:10px;
+    font-weight:600;
+}
+.easyui_form .button{
+    width:181px;
+	margin:10px auto 0px;
+	cursor:pointer;
+}
+.easyui_form_submit{
+	background:url('__PUBLIC__/Images/button.jpg');
+	width:181px;
+	height:50px;
+	border:none;
+	cursor:pointer;
+	color:#fff;
+	font-size:26px;
+	font-weight:600;
+}
+
+/*表格样式*/
+.table_list-div {
+    background: #EEF8F9;
+    border: 1px solid #BBDDE5;
+}
+.table_list-div tr {
+    height:28px;
+}
+.table_list-div td {
+    background: #FFF;
+}
+.table_list-div th {
+    line-height: 24px;
+    background: #BBDDE5 url("__PUBLIC__/Images/th_bg.gif") repeat-x;
+    white-space: nowrap;
+	text-align:center;
+}
+.table_list-div a {
+    color: #000;
+}
+.table_list-div a:hover {
+    color: red;
+}
+.table_four{  
+    background:#FBEC88;  
+}
+</style>
+
+<div id="header" region="north" border="false">
+    <div style="float:left;">
+	    <a href="/" target="blank" title="前往网站">
+		    <img src="__PUBLIC__/images/logo.gif" />
+		</a>
+	</div>
+    <div style="float:right;margin:26px 30px 0;font-weight:600;">
+	    欢迎: <a href="javascript:;" id="changePW"><{$_SESSION['loginUserName']}></a> [<{$_SESSION['loginUserNickname']}>] 
+	    <a href="<{:U('Public/logout')}>" title="退出"><img src="__PUBLIC__/images/logout.jpg" /></a>
+	</div>
+</div>
+<div id="mymenu" region="west" split="true" title="菜单栏">
+    <ul id="navTree" class="easyui-tree" animate="true"></ul>
+</div>
+<div region="center" split="true" title="">
+    <div id="navTabs" fit="true" border="false" plain="true"></div>
+</div>
+<div id="easyui_window"></div>
+<script type='text/javascript'>
+var makeDgCheckBox = function(args){
+    var checkbox_string = '<input onclick="$(this).changeDgStatus(\''+args.url+'\');" type="checkbox" %s />';
+    args.value = args.value == 1 ? 'checked="checked"' : '';
+    args.value = checkbox_string.replace("%s",args.value);
+    return args.value;
+};
+
+$.extend({
+    mTime: {
+        /**
+         * 当前时间戳
+         * @return <int>        unix时间戳(秒)  
+         */
+        CurTime: function(){
+            return Date.parse(new Date())/1000;
+        },
+        /**              
+         * 日期 转换为 Unix时间戳
+         * @param <string> 2014-01-01 20:20:20  日期格式              
+         * @return <int>        unix时间戳(秒)              
+         */
+        DateToUnix: function(string) {
+            var f = string.split(' ', 2);
+            var d = (f[0] ? f[0] : '').split('-', 3);
+            var t = (f[1] ? f[1] : '').split(':', 3);
+            return (new Date(
+                    parseInt(d[0], 10) || null,
+                    (parseInt(d[1], 10) || 1) - 1,
+                    parseInt(d[2], 10) || null,
+                    parseInt(t[0], 10) || null,
+                    parseInt(t[1], 10) || null,
+                    parseInt(t[2], 10) || null
+                    )).getTime() / 1000;
+        },
+        /**              
+         * 时间戳转换日期              
+         * @param <int> unixTime    待时间戳(秒)              
+         * @param <bool> isFull    返回完整时间(Y-m-d 或者 Y-m-d H:i:s)              
+         * @param <int>  timeZone   时区              
+         */
+        UnixToDate: function(unixTime, isFull, timeZone) {
+            timeZone = timeZone ? timeZone : 8;
+            if (typeof (timeZone) == 'number') {
+                unixTime = parseInt(unixTime) + parseInt(timeZone) * 60 * 60;
+            }
+            var time = new Date(unixTime * 1000);
+            var ymdhis = "";
+            ymdhis += time.getUTCFullYear() + "-";
+            ymdhis += (time.getUTCMonth()+1) + "-";
+            ymdhis += time.getUTCDate();
+            if (isFull === true) {
+                ymdhis += " " + time.getUTCHours() + ":";
+                ymdhis += time.getUTCMinutes() + ":";
+                ymdhis += time.getUTCSeconds();
+            }
+            return ymdhis;
+        }
+    }
+});
+
+$.fn.extend({
+    mWindow:function(options){
+	    var win = $(window);
+	    var ww = win.width();
+		var wh = win.height();
+		options.width = options.width > ww ? ww : options.width;
+		options.height = options.height > wh ? wh : options.height;
+	    var m = {
+		    cache:false,
+            modal:true,
+            minimizable:false,
+			top:(win.height()-options.height)/2,   
+            left:(win.width()-options.width)/2,
+            loadingMessage:'正在加载中,请稍后!',
+		}
+	    $.extend(m, options);
+	    this.window(m);
+	},
+	
+	postForm:function(url, options) {
+	    if ( typeof url === "object" ) {
+			options = url;
+		} else {
+		    options.url = url;
+		}
+		url = undefined;
+		var o = options || {};
+		var m = this;
+		this.find(".easyui_form_submit").click(function(){
+            m.ajaxSubmit({
+                url: o.url,
+                type: "POST",
+                dataType: "json",
+                beforeSubmit: o.beforeSubmit,
+                success: typeof(o.success)=="function" ? o.success : function(result){
+                    $.messager.alert('信息提示', result.info);
+                    //成功则关闭窗口 否则刷新窗口
+                    if(result.status == 1){
+					    var selector = m.selector.substring(0, m.selector.indexOf("_"));
+                        $("#easyui_window").window("close");
+                        $(selector+"_dg").datagrid("load");
+                    }
+                }
+            });
+        });
+	},
+	
+	changeDgStatus:function(url){
+	    var id = $(this).parent().parent().parent().find('[field="id"]').children().html();
+        var type = $(this).parent().parent().attr("field");
+        var value = $(this).prop("checked") ? 1 : 0;
+        $.post(url, {
+            id: id,
+            type: type,
+            value: value
+        });
+	},
+
+    getArea:function(options){
+        var handler = $(this);
+        var id = options.area_id ? options.area_id : 0;
+        if (options.area_name) handler.data("area_name", options.area_name.split("|"));
+        var length = handler.find("select").length;
+        if (!handler.data("times")) options.times ? handler.data("times", options.times) : handler.data("times", 2);
+        if (!handler.data("pname")) options.pname ? handler.data("pname", options.pname) : handler.data("pname", handler[0].id);
+        $.getJSON("/Admin/Public/getArea/id/" + id, function(data) {
+            if (data.status == 1) {
+                var str = '<select name="'+handler.data("pname")+'[]"><option value="0">请选择</option>';
+                var selected = "";
+                var names = handler.data("area_name");
+                for (var i in data.info) {
+                    if (names) selected = data.info[i].name == names[length] ? 'selected="selected"' : "";
+                    str += '<option tid="'+data.info[i].id+'" '+selected+' value="'+data.info[i].name+'">'+data.info[i].name+'</option>';
+                }
+                str += '</select>';
+                if (length >= handler.data("times")) {
+                    handler.removeData("times");
+                    handler.removeData("pname");
+                    handler.removeData("area_name");
+                    $(str).appendTo(handler.selector);
+                } else {
+                    $(str).change(function() {
+                        $(this).nextAll().remove();
+                        var tid = $(this).find("option:selected").attr("tid");
+                        if (tid) {
+                            handler.getArea({"area_id":tid});
+                        }
+                    }).appendTo(handler.selector).change();
+                }
+            }
+        });
+    }
+});
+
+var pageSize = 20;
+$(function(){
+    //var Tabs_i = 0;
+    //获取菜单栏数据并转成json对象
+    var navCache = $.parseJSON('<{$navTree}>');
+    //初始化菜单栏,菜单栏和body的高度
+    $('#navTree').tree("loadData",navCache);
+    //初始化tab栏
+    $('#navTabs').tabs();
+    //初始化菜单栏点击事件
+    $('#navTree').tree({
+        onClick:function(node){
+            if(node.hasOwnProperty("attributes") && node.attributes.title != ""){
+                var tab=$('#navTabs').tabs("getTab",node.text);
+                if(tab==null || tab==undefined){
+                    //控制Tabs能显示的数目,避免浏览器占用过多资源
+                    //if(Tabs_i > 1){$("#navTabs").tabs("close", 0);Tabs_i --;}Tabs_i ++;
+					$("#navTabs").tabs("close", 0);
+                    $("#navTabs").tabs("add",{
+                        title:node.text,
+                        href:"<{:U('/Admin/"+node.attributes.url+"')}>"
+                    });
+                }else{
+                    $("#navTabs").tabs("select",node.text);
+                }
+            }
+        }
+    });
+    //初始化菜单栏全部展开或缩进功能
+    $(".panel-header .panel-title").attr("title","全部展开或缩进").css("cursor","pointer").click(function(){
+        var act = $(this).attr("do");
+        act = act == undefined ? 'close' : act;
+		var str;
+        if(act == 'close'){
+			str = "collapseAll";
+            $(this).attr("do","open");
+        }else{
+		    str = "expandAll";
+            $(this).attr("do","close");
+        }
+		var node = $("#navTree").tree();
+        if (node){
+            $("#navTree").tree(str, node.target);
+        } else {
+            $("#navTree").tree(str);
+        }
+    });
+    //初始化后台首页界面
+    $("#navTabs").tabs("add",{
+        title:'欢迎进入管理中心',
+        href:"__URL__/sysinfo"
+    });
+	
+	$("#changePW").click(function(){
+	    $("#easyui_window").mWindow({
+		    title:"修改个人信息",
+            href:"<{:U('Admin/Admin/edit_myself')}>",
+            height:460,
+            width:400
+		});
+	});
+});
+</script>
+
+<include file="Public:footer" />
